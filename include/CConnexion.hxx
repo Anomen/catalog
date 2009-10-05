@@ -14,8 +14,8 @@ inline CCONNEXION::~CConnexion()
 
 inline void CCONNEXION::Close()
 {
-    close (m_Sd);
-    m_Sd = 0;
+    //close (m_Sd);
+    //m_Sd = 0;
 }
 
 inline void CCONNEXION::SetServeur (std::string Serveur)

@@ -177,14 +177,12 @@ CFilm & imdb_com::Detail (CFilm & Film)
     {
         Temp = Extraire (Page, "<a name=\"poster\"", "/>").at (0);
         string Temp2 = Extraire (Temp, "src=\"", "\"").at(0);
-        cout << Temp2 << endl;
 
         ostringstream oss;
         oss << Film.GetIdImg();
 
         ofstream ofs (oss.str().c_str(), fstream::binary);
         CConnexion cnx (Temp2.substr(7, Temp2.find_first_of('/', 7)-7));
-        cnx.Init();
         cnx.GetFich (Temp2, ofs);
     }
     catch (const exception &) { }
