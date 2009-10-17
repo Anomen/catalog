@@ -1,6 +1,7 @@
 /*
- * This file is part of catalg-server.
- * Copyright (C) 2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * This file is part of catalog-server.
+ * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
