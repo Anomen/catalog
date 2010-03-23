@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,18 +23,18 @@
 #include <vector>
 #include <string>
 
-#include "ARecherche.h"
+#include "ASearch.h"
 #include "CFilm.h"
 
 namespace nsCatalog
 {
-    class allocine_fr : public ARecherche
+    class allocine_fr : public ASearch
     {
       public:
         allocine_fr();
         ~allocine_fr();
 
-        VFilm_t Recherche (std::string MotCle) throw (CException);
+        VFilm_t Search (std::string KeyWord) throw (CException);
         CFilm & Detail    (CFilm & Film      );
     };
 }

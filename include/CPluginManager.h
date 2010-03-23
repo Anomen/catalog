@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,15 +26,15 @@
 namespace nsCatalog
 {
     class CException;
-    class ARecherche;
+    class ASearch;
     class CPluginManager
     {
       public:
-        typedef ARecherche * make_t();
+        typedef ASearch * make_t();
 
         static CPluginManager * getInstance();
 
-        ARecherche * Create(std::string name) throw (CException);
+        ASearch * Create(std::string name) throw (CException);
 
         std::vector<std::string> GetEngines();
 

@@ -4,18 +4,18 @@
 #include <vector>
 #include <string>
 
-#include "ARecherche.h"
+#include "ASearch.h"
 #include "CFilm.h"
 
 namespace nsCatalog
 {
-    class allocine_fr : public ARecherche
+    class allocine_fr : public ASearch
     {
       public:
         allocine_fr();
         ~allocine_fr();
 
-        VFilm_t Recherche (std::string MotCle) throw (CException);
+        VFilm_t Search (std::string KeyWord) throw (CException);
         CFilm & Detail    (CFilm & Film      );
 
         std::string GetPage (std::string Url) throw (CException);

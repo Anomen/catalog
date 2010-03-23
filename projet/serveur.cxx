@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,7 +20,7 @@
 #include "CException.h"
 #include "CDatabase.h"
 #include "constants.h"
-#include "ARecherche.h"
+#include "ASearch.h"
 #include "CPluginManager.h"
 
 #include <sys/types.h>  // socket(), bind()
@@ -82,7 +82,7 @@ namespace
         ostringstream oss;
         oss << SUCCESS << '\n';
         for (VFilm_t::iterator i = VFilm.begin(); i < VFilm.end(); i++)
-            oss << (*i).GetId() << ' ' << (*i).GetTitre() << '\n';
+            oss << (*i).GetId() << ' ' << (*i).GetTitle() << '\n';
 
         return oss.str();
 
@@ -103,9 +103,9 @@ namespace
 
     }
 
-    string CmdSearch (string Moteur, string Titre) throw (CException)
+    string CmdSearch (string Moteur, string Title) throw (CException)
     {
-        ARecherche *Net;
+        ASearch *Net;
 
         try {
             Net = CPluginManager::getInstance()->Create(Moteur);
@@ -116,7 +116,7 @@ namespace
         VFilm_t VFilm;
         
         try {
-            VFilm = Net->Recherche (Titre);
+            VFilm = Net->Search (Title);
         } catch (const CException &e) {
             throw CException (ERR_NOT_FND);
         }
@@ -125,13 +125,13 @@ namespace
         oss << SUCCESS << '\n';
         unsigned Num (0);
         for (VFilm_t::iterator i = VFilm.begin(); i < VFilm.end(); i++)
-            oss << ++Num << ' ' << (*i).GetTitre() << '\n';
+            oss << ++Num << ' ' << (*i).GetTitle() << '\n';
 
         return oss.str();
 
     }
 
-    string CmdImage (int sd, string Titre) throw (CException)
+    string CmdImage (int sd, string Title) throw (CException)
     {
         CDatabase db;
 
@@ -143,7 +143,7 @@ namespace
 
         VFilm_t VFilm;
         try {
-            VFilm = db.GetFilm (Titre);
+            VFilm = db.GetFilm (Title);
         } catch (const CException &e) {
             throw CException (ERR_NOT_FND);
         }
@@ -169,7 +169,7 @@ namespace
 
     }
 
-    string CmdShow (string Titre) throw (CException)
+    string CmdShow (string Title) throw (CException)
     {
         CDatabase db;
 
@@ -181,7 +181,7 @@ namespace
 
         VFilm_t VFilm;
         try {
-            VFilm = db.GetFilm (Titre);
+            VFilm = db.GetFilm (Title);
         } catch (const CException &e) {
             throw CException (ERR_NOT_FND);
         }
@@ -190,27 +190,27 @@ namespace
         oss << SUCCESS << '\n';
         if (VFilm.size() > 1)
             for (VFilm_t::iterator i = VFilm.begin(); i < VFilm.end(); i++)
-                oss << (*i).GetId() << ' ' << (*i).GetTitre() << '\n';
+                oss << (*i).GetId() << ' ' << (*i).GetTitle() << '\n';
         else
             oss << VFilm[0].GetId()    << '\n'
-                << VFilm[0].GetTitre() << '\n'
+                << VFilm[0].GetTitle() << '\n'
                 << VFilm[0].GetDesc()  << '\n'
                 << VFilm[0].GetGenre() << '\n'
-                << VFilm[0].GetRealisateur() << '\n'
-                << VFilm[0].GetActeurs()  << '\n'
+                << VFilm[0].GetCreator() << '\n'
+                << VFilm[0].GetActors()  << '\n'
                 << VFilm[0].GetJour() << '/' << VFilm[0].GetMois() << '/' << VFilm[0].GetAnnee() << '\n'
-                << VFilm[0].GetDuree() << '\n';
+                << VFilm[0].GetTime() << '\n';
 
         return oss.str();
 
     }
 
-    string CmdAdd (string Moteur, string Titre, unsigned Num)
+    string CmdAdd (string Moteur, string Title, unsigned Num)
     {
         if (!Num--)
             throw CException (ERR_CMD);
 
-        ARecherche *Net;
+        ASearch *Net;
         try {
             Net = CPluginManager::getInstance()->Create(Moteur);
         } catch (const CException &e) {
@@ -219,7 +219,7 @@ namespace
 
         VFilm_t VFilm;
         try {
-            VFilm = Net->Recherche (Titre);
+            VFilm = Net->Search (Title);
         } catch (const CException & e) {
             throw CException (ERR_NOT_FND);
         }
@@ -235,14 +235,14 @@ namespace
         {
             bool Exists (false);
             try {
-                db.GetFilm (VFilm.at(Num).GetTitre());
+                db.GetFilm (VFilm.at(Num).GetTitle());
                 Exists = true;
             } catch (const CException &) { }
 
             if (Exists) throw CException (ERR_RDY_ADD);
 
             Net->Detail (VFilm.at(Num));
-            db.Ajouter (VFilm.at(Num));
+            db.Add (VFilm.at(Num));
         }
         catch (const exception & e) {
             throw CException (ERR_INDICE);
@@ -254,7 +254,7 @@ namespace
 
     }
 
-    string CmdRemove (string Titre, int Num)
+    string CmdRemove (string Title, int Num)
     {
         if (!Num--)
             throw CException (ERR_CMD);
@@ -268,7 +268,7 @@ namespace
 
         VFilm_t VFilm;
         try {
-            VFilm = db.GetFilm (Titre);
+            VFilm = db.GetFilm (Title);
         } catch (const CException &e) {
             throw CException (ERR_NOT_FND);
         }
@@ -276,7 +276,7 @@ namespace
         unsigned img = VFilm.at(Num).GetIdImg();
 
         try {
-            db.Supprimer (VFilm.at(Num));
+            db.Delete (VFilm.at(Num));
         } catch (const exception & e) {
             throw CException (ERR_INDICE);
         }

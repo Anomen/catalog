@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -36,46 +36,46 @@ using namespace std;
 using namespace nsCatalog;
 
 imdb_com::imdb_com()
-    : ARecherche ("www.imdb.com")
+    : ASearch ("www.imdb.com")
 { }
 
 imdb_com::~imdb_com() { }
 
-VFilm_t imdb_com::Recherche (string MotCle) throw (CException)
+VFilm_t imdb_com::Search (string KeyWord) throw (CException)
 {
     VFilm_t VFilms;
-    Urlencode (MotCle);
+    Urlencode (KeyWord);
 
     ostringstream oss;
-    oss << "find?s=tt&q=" << MotCle << "&x=26&y=12";
+    oss << "find?s=tt&q=" << KeyWord << "&x=26&y=12";
 
-    string Page = Extraire (
+    string Page = Extract (
         GetPage (oss.str()),
         "<p><b>Popular Titles</b>",
         "</td></tr></table> </p>"
     ).at(0);
 
-    vector<string> VStrTitre = Extraire (
+    vector<string> VStrTitle = Extract (
         Page,
         ".</td><td valign=\"top\"><img src=\"/images/b.gif\" width=\"1\" height=\"6\"><br><a href=\"/",
         "</a>"
     );
 
-    //vector<string> VStrAnnee = Extraire (
+    //vector<string> VStrAnnee = Extract (
     //    Page,
     //    "<div style=\"padding-top: 2px;\"><h4 style=\"color: #808080\">",
     //    "</h4>"
     //);
 
-    unsigned Taille (VStrTitre.size());
+    unsigned Taille (VStrTitle.size());
     for (unsigned i (0); i < Taille; ++i)
     {
-        string Temp (VStrTitre[i]);
-        Supprimer (Temp, 0, Temp.find_first_of ('>', 0)+1);
+        string Temp (VStrTitle[i]);
+        Delete (Temp, 0, Temp.find_first_of ('>', 0)+1);
 
         CFilm F;
-        F.SetTitre (Temp);
-        F.SetUrl (VStrTitre[i].substr (0, VStrTitre[i].find_first_of ('"')));
+        F.SetTitle (Temp);
+        F.SetUrl (VStrTitle[i].substr (0, VStrTitle[i].find_first_of ('"')));
 
         //try {
         //    F.SetAnnee (atoi (VStrAnnee.at(i).c_str()));
@@ -113,7 +113,7 @@ CFilm & imdb_com::Detail (CFilm & Film)
 
     try
     {
-        Temp = Extraire (Page, "<h5>Release Date:</h5>", "<").at(0);
+        Temp = Extract (Page, "<h5>Release Date:</h5>", "<").at(0);
 
         unsigned J, M, A;
         istringstream iss (Temp);
@@ -129,11 +129,11 @@ CFilm & imdb_com::Detail (CFilm & Film)
     // Réalisateur
     try
     {
-        Temp = Extraire (Page, "<h5>Director:</h5>", "</a>").at (0);
-        Supprimer (Temp, 0, Temp.find_first_of ('>')+1);
-        Supprimer (Temp, "\n");
+        Temp = Extract (Page, "<h5>Director:</h5>", "</a>").at (0);
+        Delete (Temp, 0, Temp.find_first_of ('>')+1);
+        Delete (Temp, "\n");
 
-        Film.SetRealisateur (Temp);
+        Film.SetCreator (Temp);
     }
     catch (const exception &) { }
 
@@ -141,39 +141,39 @@ CFilm & imdb_com::Detail (CFilm & Film)
     try
     {
         string PageSynopsis (GetPage (Film.GetUrl() + "plotsummary"));
-        Temp = Extraire (PageSynopsis, "<p class=\"plotpar\">", "</p>").at (0);
-        while (Supprimer (Temp, Temp.find_first_of ('<'), 
+        Temp = Extract (PageSynopsis, "<p class=\"plotpar\">", "</p>").at (0);
+        while (Delete (Temp, Temp.find_first_of ('<'), 
                                 Temp.find_first_of ('>')+1));
-        Supprimer (Temp, "\n");
+        Delete (Temp, "\n");
 
         Film.SetDesc (Temp);
     }
     catch (const exception &) { }
 
-    // Acteurs
+    // Actors
     try
     {
-        Temp = Extraire (Page, "<table class=\"cast\">", "</table>").at (0);
-        vector<string> StrAct = Extraire (Temp, "<td class=\"nm\">", "</a>");
+        Temp = Extract (Page, "<table class=\"cast\">", "</table>").at (0);
+        vector<string> StrAct = Extract (Temp, "<td class=\"nm\">", "</a>");
         ostringstream oss;
         for (vector<string>::iterator i = StrAct.begin();
                 i != StrAct.end(); i++)
         {
-            Supprimer (*i, 0, (*i).find_first_of('>')+1);
+            Delete (*i, 0, (*i).find_first_of('>')+1);
             oss << *i << ", ";
         }
 
-        Film.SetActeurs (oss.str());
+        Film.SetActors (oss.str());
     }
     catch (const exception &) { }
 
     // Genre
     try
     {
-        Temp = Extraire (Page, "<h5>Genre:</h5>", "</div>").at (0);
-        while (Supprimer (Temp, Temp.find_first_of ('<'), 
+        Temp = Extract (Page, "<h5>Genre:</h5>", "</div>").at (0);
+        while (Delete (Temp, Temp.find_first_of ('<'), 
                                 Temp.find_first_of ('>')+1));
-        Supprimer (Temp, "\n");
+        Delete (Temp, "\n");
 
         Film.SetGenre (Temp);
     }
@@ -182,33 +182,33 @@ CFilm & imdb_com::Detail (CFilm & Film)
     // Durée
     try
     {
-        Temp = Extraire (Page, "<h5>Runtime:</h5>", "min").at (0);
+        Temp = Extract (Page, "<h5>Runtime:</h5>", "min").at (0);
 
-        unsigned Duree (0);
+        unsigned Time (0);
         istringstream iss2 (Temp);
-        iss2 >> Duree;
-        Film.SetDuree (Duree);
+        iss2 >> Time;
+        Film.SetTime (Time);
     }
     catch (const exception &) { }
 
     // Image
     try
     {
-        Temp = Extraire (Page, "<a name=\"poster\"", "/>").at (0);
-        string Temp2 = Extraire (Temp, "src=\"", "\"").at(0);
+        Temp = Extract (Page, "<a name=\"poster\"", "/>").at (0);
+        string Temp2 = Extract (Temp, "src=\"", "\"").at(0);
 
         ostringstream oss;
         oss << Film.GetIdImg();
 
         ofstream ofs (oss.str().c_str(), fstream::binary);
-        CConnexion cnx (Temp2.substr(7, Temp2.find_first_of('/', 7)-7));
-        cnx.GetFich (Temp2, ofs);
+        CConnection cnx (Temp2.substr(7, Temp2.find_first_of('/', 7)-7));
+        cnx.GetFile (Temp2, ofs);
     }
     catch (const exception &) { }
 
     return Film;
 }
 
-extern "C" ARecherche * create() {
+extern "C" ASearch * create() {
     return new imdb_com();
 }

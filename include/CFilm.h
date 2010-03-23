@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -31,38 +31,38 @@ namespace nsCatalog
         CFilm();
 
         // Modifieurs
-        std::string GetRealisateur () const;
-        std::string GetTitre  () const;
+        std::string GetCreator () const;
+        std::string GetTitle  () const;
         std::string GetDesc   () const;
         std::string GetGenre  () const;
-        std::string GetActeurs() const;
+        std::string GetActors() const;
         std::string GetUrl    () const;
         unsigned    GetJour   () const;
         unsigned    GetMois   () const;
         unsigned    GetAnnee  () const;
-        unsigned    GetDuree  () const;
+        unsigned    GetTime  () const;
         unsigned    GetId     () const;
         unsigned    GetIdImg  () const;
 
         friend std::ostream & operator << (std::ostream &os, const CFilm &F);
 
         // Modifieurs
-        void SetTitre (std::string Titre);
+        void SetTitle (std::string Title);
         void SetDesc  (std::string Desc );
         void SetGenre (std::string Genre);
-        void SetRealisateur (std::string Realisateur);
-        void SetActeurs (std::string Acteurs);
+        void SetCreator (std::string Creator);
+        void SetActors (std::string Actors);
         void SetUrl     (std::string Url);
         void SetJour  (unsigned J);
         void SetMois  (unsigned M);
         void SetAnnee (unsigned A);
-        void SetDuree (unsigned Duree);
+        void SetTime (unsigned Time);
         void SetId    (unsigned Id);
         void SetIdImg (unsigned IdImg);
 
       private:
-        std::string m_Titre, m_Desc, m_Genre, m_Realisateur, m_Acteurs, m_Url;
-        unsigned    m_J, m_M, m_A, m_Duree, m_Id, m_IdImg;
+        std::string m_Title, m_Desc, m_Genre, m_Creator, m_Actors, m_Url;
+        unsigned    m_J, m_M, m_A, m_Time, m_Id, m_IdImg;
     };
 
     typedef std::vector <CFilm> VFilm_t;

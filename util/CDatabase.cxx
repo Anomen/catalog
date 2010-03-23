@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -69,16 +69,16 @@ int CDatabase::recupFilm(void *NotUsed, int argc, char **argv, char **azColName)
 {
     CFilm f;
     f.SetId(atoi(argv[0]));
-    f.SetTitre(argv[1]);
+    f.SetTitle(argv[1]);
     f.SetDesc(argv[2]);
     f.SetGenre(argv[3]);
-    f.SetRealisateur(argv[4]);
-    f.SetActeurs(argv[5]);
+    f.SetCreator(argv[4]);
+    f.SetActors(argv[5]);
 
     f.SetJour(atoi(argv[6]));
     f.SetMois(atoi(argv[7]));
     f.SetAnnee(atoi(argv[8]));
-    f.SetDuree(atoi(argv[9]));
+    f.SetTime(atoi(argv[9]));
     f.SetIdImg(atoi(argv[10]));
 
     s_films.push_back(f);
@@ -115,11 +115,11 @@ inline string CDatabase::Escape (string Str) const
     return oss.str().substr (0, oss.str().size()-2);
 }
 
-void CDatabase::Ajouter (const CFilm & Film) const throw (CException)
+void CDatabase::Add (const CFilm & Film) const throw (CException)
 {
     bool Exists (false);
     try {
-        GetFilm(Film.GetTitre());
+        GetFilm(Film.GetTitle());
         Exists = true;
     } catch (const CException &) { }
 
@@ -129,16 +129,16 @@ void CDatabase::Ajouter (const CFilm & Film) const throw (CException)
     jour  << dec << Film.GetJour();
     mois  << Film.GetMois();
     annee << Film.GetAnnee();
-    duree << Film.GetDuree();
+    duree << Film.GetTime();
     idImg << Film.GetIdImg();
 
     Exec("INSERT INTO films VALUES ("
          "NULL,"
-         "\"" + Escape (Film.GetTitre()) + "\","
+         "\"" + Escape (Film.GetTitle()) + "\","
          "\"" + Escape (Film.GetDesc()) + "\","
          "\"" + Escape (Film.GetGenre()) + "\","
-         "\"" + Escape (Film.GetRealisateur()) + "\","
-         "\"" + Escape (Film.GetActeurs()) + "\","
+         "\"" + Escape (Film.GetCreator()) + "\","
+         "\"" + Escape (Film.GetActors()) + "\","
          "" + jour.str() + ","
          "" + mois.str() + ","
          "" + annee.str() + ","
@@ -146,21 +146,21 @@ void CDatabase::Ajouter (const CFilm & Film) const throw (CException)
          "" + idImg.str() + ")");
 }
 
-void CDatabase::Modifier (const CFilm & Film) const throw (CException)
+void CDatabase::Edit (const CFilm & Film) const throw (CException)
 {
     stringstream id, jour, mois, annee, duree;
     id    << Film.GetId();
     jour  << Film.GetJour();
     mois  << Film.GetMois();
     annee << Film.GetAnnee();
-    duree << Film.GetDuree();
+    duree << Film.GetTime();
 
     Exec("UPDATE films SET "
-         "titre=\"" + Film.GetTitre() + "\","
+         "titre=\"" + Film.GetTitle() + "\","
          "description=\"" + Film.GetDesc() + "\","
          "genre=\"" + Film.GetGenre() + "\","
-         "realisateur=\"" + Film.GetRealisateur() + "\","
-         "acteurs=\"" + Film.GetActeurs() + "\","
+         "realisateur=\"" + Film.GetCreator() + "\","
+         "acteurs=\"" + Film.GetActors() + "\","
          "jour_sortie=" + jour.str() + ","
          "mois_sortie=" + mois.str() + ","
          "annee_sortie=" + annee.str() + ","
@@ -168,7 +168,7 @@ void CDatabase::Modifier (const CFilm & Film) const throw (CException)
          "WHERE id="+id.str());
 }
 
-void CDatabase::Supprimer(const CFilm & Film) const throw (CException)
+void CDatabase::Delete(const CFilm & Film) const throw (CException)
 {
     stringstream id;
     id << Film.GetId();

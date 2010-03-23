@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -22,15 +22,15 @@
 
 #include <iostream>
 
-#define ARECHERCHE nsCatalog::ARecherche
+#define ARECHERCHE nsCatalog::ASearch
 
-inline ARECHERCHE::~ARecherche() { }
+inline ARECHERCHE::~ASearch() { }
 
-inline ARECHERCHE::ARecherche (std::string Serveur)
+inline ARECHERCHE::ASearch (std::string Server)
 {
     try
     {
-        m_Cnx.SetServeur (Serveur);
+        m_Cnx.SetServer (Server);
         //m_Cnx.Init();
     }
     catch (const CException & E)
@@ -39,7 +39,7 @@ inline ARECHERCHE::ARecherche (std::string Serveur)
     }
 }
 
-inline bool ARECHERCHE::Supprimer (std::string & Texte, int PosBeg, int PosEnd) const
+inline bool ARECHERCHE::Delete (std::string & Text, int PosBeg, int PosEnd) const
 {
     if (PosBeg == -1 || PosEnd == -1) return false;
 
@@ -48,9 +48,9 @@ inline bool ARECHERCHE::Supprimer (std::string & Texte, int PosBeg, int PosEnd) 
 
     try
     {
-        Temp  = Texte.substr (0, PosBeg);
-        Temp += Texte.substr (PosEnd, Texte.size() - PosEnd);
-        Texte = Temp;
+        Temp  = Text.substr (0, PosBeg);
+        Temp += Text.substr (PosEnd, Text.size() - PosEnd);
+        Text = Temp;
         Rempl = true;
     }
     catch (const std::exception &) { }
@@ -58,18 +58,18 @@ inline bool ARECHERCHE::Supprimer (std::string & Texte, int PosBeg, int PosEnd) 
     return Rempl;
 }
 
-inline bool ARECHERCHE::Supprimer (std::string & Texte, std::string Str) const
+inline bool ARECHERCHE::Delete (std::string & Text, std::string Str) const
 {
     bool Rempl (false);
 
     while (true)
     {
-        int i (Texte.find (Str));
+        int i (Text.find (Str));
 
         if (i != -1) 
         {
             Rempl = true;
-            Supprimer (Texte, i, i+Str.size());
+            Delete (Text, i, i+Str.size());
         }
         else break;
     }
@@ -77,9 +77,9 @@ inline bool ARECHERCHE::Supprimer (std::string & Texte, std::string Str) const
     return Rempl;
 }
 
-inline void ARECHERCHE::GetFich (std::string Url, std::ofstream & ofs) throw (CException)
+inline void ARECHERCHE::GetFile (std::string Url, std::ofstream & ofs) throw (CException)
 {
-    m_Cnx.GetFich (Url, ofs);
+    m_Cnx.GetFile (Url, ofs);
 }
 
 #endif

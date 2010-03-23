@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,35 +24,35 @@
 #include <string>
 #include <fstream>
 #include "CFilm.h"
-#include "CConnexion.h"
+#include "CConnection.h"
 
 namespace nsCatalog
 {
-    class ARecherche
+    class ASearch
     {
       public:
-        ARecherche (std::string Serveur);
-        virtual ~ARecherche();
+        ASearch (std::string Server);
+        virtual ~ASearch();
 
-        virtual VFilm_t Recherche (std::string MotCle) throw (CException) = 0;
+        virtual VFilm_t Search (std::string KeyWord) throw (CException) = 0;
         virtual CFilm & Detail    (CFilm & Film      ) = 0;
 
-        std::vector<std::string> Extraire (const std::string & Texte,
+        std::vector<std::string> Extract (const std::string & Text,
                                            std::string Begin, std::string End) const;
 
-        bool Supprimer (std::string & Texte, int PosBeg, int PosEnd) const;
-        bool Supprimer (std::string & Texte, std::string Str)        const;
+        bool Delete (std::string & Text, int PosBeg, int PosEnd) const;
+        bool Delete (std::string & Text, std::string Str)        const;
       
       protected:
-        CConnexion m_Cnx;
+        CConnection m_Cnx;
 
         std::string GetPage (std::string Url) throw (CException);
-        void        GetFich (std::string Url, std::ofstream & ofs) 
+        void        GetFile (std::string Url, std::ofstream & ofs) 
                                               throw (CException);
         
     };
 }
 
-#include "ARecherche.hxx"
+#include "ASearch.hxx"
 
 #endif

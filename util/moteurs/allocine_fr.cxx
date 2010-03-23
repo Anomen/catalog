@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -35,7 +35,7 @@ using namespace std;
 using namespace nsCatalog;
 
 allocine_fr::allocine_fr()
-    : ARecherche ("www.allocine.fr")
+    : ASearch ("www.allocine.fr")
 { }
 
 allocine_fr::~allocine_fr() { }
@@ -44,7 +44,7 @@ string allocine_fr::GetPage (string Url) throw (CException)
 {
     iconv_t cd = iconv_open ("UTF-8", "ISO-8859-1");
 
-    string Page = ARecherche::GetPage(Url);
+    string Page = ASearch::GetPage(Url);
     char In[Page.size()], Out[Page.size()];
 
     char *ptrOut = Out;
@@ -63,46 +63,46 @@ string allocine_fr::GetPage (string Url) throw (CException)
     return string (Out);
 }
 
-VFilm_t allocine_fr::Recherche (string MotCle) throw (CException)
+VFilm_t allocine_fr::Search (string KeyWord) throw (CException)
 {
     int NumPage (0);
     VFilm_t VFilms;
-    Urlencode (MotCle);
+    Urlencode (KeyWord);
 
     while (true)
     {
         ostringstream oss;
-        oss << "recherche/?motcle=" << MotCle << "&rub=1&page=" << ++NumPage;
+        oss << "recherche/?motcle=" << KeyWord << "&rub=1&page=" << ++NumPage;
 
         string Page = GetPage (oss.str());
 
-        vector<string> VStrTitre = Extraire (
+        vector<string> VStrTitle = Extract (
             Page,
             "<td valign=\"top\"><h4><a href=\"/film/fichefilm_gen_cfilm=",
             "</a>"
         );
 
-        vector<string> VStrAnnee = Extraire (
+        vector<string> VStrAnnee = Extract (
             Page,
             "<div style=\"padding-top: 2px;\"><h4 style=\"color: #808080\">",
             "</h4>"
         );
 
-        if (!VStrTitre.size()) break;
+        if (!VStrTitle.size()) break;
 
-        unsigned Taille (VStrTitre.size());
+        unsigned Taille (VStrTitle.size());
         for (unsigned i (0); i < Taille; ++i)
         {
-            string Temp (VStrTitre[i]);
-            Supprimer (Temp, 0, Temp.find_first_of ('>', 0)+1);
-            Supprimer (Temp, "<b>");
-            Supprimer (Temp, "</b>");
+            string Temp (VStrTitle[i]);
+            Delete (Temp, 0, Temp.find_first_of ('>', 0)+1);
+            Delete (Temp, "<b>");
+            Delete (Temp, "</b>");
 
             CFilm F;
-            F.SetTitre (Temp);
+            F.SetTitle (Temp);
             F.SetUrl ("film/fichefilm_gen_cfilm=" 
-                      + VStrTitre[i].substr (0, 
-                            VStrTitre[i].find_first_of ('.')) 
+                      + VStrTitle[i].substr (0, 
+                            VStrTitle[i].find_first_of ('.')) 
                       + ".html");
 
             try {
@@ -142,7 +142,7 @@ CFilm & allocine_fr::Detail (CFilm & Film)
 
     try
     {
-        Temp = Extraire (Page, "Date de sortie : <b>", "<").at(0);
+        Temp = Extract (Page, "Date de sortie : <b>", "<").at(0);
 
         unsigned J, M, A;
         istringstream iss (Temp);
@@ -158,44 +158,44 @@ CFilm & allocine_fr::Detail (CFilm & Film)
     // Réalisateur
     try
     {
-        Temp = Extraire (Page, "par <a class=\"link1\" href=\"/personne/fichepersonne_gen_cpersonne", "</a>").at (0);
-        Supprimer (Temp, 0, Temp.find_first_of ('>')+1);
+        Temp = Extract (Page, "par <a class=\"link1\" href=\"/personne/fichepersonne_gen_cpersonne", "</a>").at (0);
+        Delete (Temp, 0, Temp.find_first_of ('>')+1);
 
-        Film.SetRealisateur (Temp);
+        Film.SetCreator (Temp);
     }
     catch (const exception &) { }
 
     // Description
     try
     {
-        Temp = Extraire (Page, "<td valign=\"top\" style=\"padding:10 0 0 0\"><div align=\"justify\"><h4>", "</h4>").at (0);
-        Supprimer (Temp, "<b>");
-        Supprimer (Temp, "</b>");
-        Supprimer (Temp, "<br");
-        Supprimer (Temp, "/>");
-        Supprimer (Temp, ">");
-        Supprimer (Temp, "\n");
+        Temp = Extract (Page, "<td valign=\"top\" style=\"padding:10 0 0 0\"><div align=\"justify\"><h4>", "</h4>").at (0);
+        Delete (Temp, "<b>");
+        Delete (Temp, "</b>");
+        Delete (Temp, "<br");
+        Delete (Temp, "/>");
+        Delete (Temp, ">");
+        Delete (Temp, "\n");
 
         Film.SetDesc (Temp);
     }
     catch (const exception &) { }
 
-    // Acteurs
+    // Actors
     try
     {
-        Temp = Extraire (Page, "<div style=\"padding: 2 0 2 0;\"><h4>Avec ", " &nbsp;&nbsp;<img").at (0);
-        while (Supprimer (Temp, Temp.find_first_of ('<'), 
+        Temp = Extract (Page, "<div style=\"padding: 2 0 2 0;\"><h4>Avec ", " &nbsp;&nbsp;<img").at (0);
+        while (Delete (Temp, Temp.find_first_of ('<'), 
                                 Temp.find_first_of ('>')+1));
 
-        Film.SetActeurs (Temp);
+        Film.SetActors (Temp);
     }
     catch (const exception &) { }
 
     // Genre
     try
     {
-        Temp = Extraire (Page, "Genre : ", "</h4>").at (0);
-        while (Supprimer (Temp, Temp.find_first_of ('<'), 
+        Temp = Extract (Page, "Genre : ", "</h4>").at (0);
+        while (Delete (Temp, Temp.find_first_of ('<'), 
                                 Temp.find_first_of ('>')+1));
 
         Film.SetGenre (Temp);
@@ -205,36 +205,36 @@ CFilm & allocine_fr::Detail (CFilm & Film)
     // Durée
     try
     {
-        Temp = Extraire (Page, "<h4>Dur", "&nbsp;</h4>").at (0);
-        Supprimer (Temp, 0, Temp.find_first_of (':')+2);
+        Temp = Extract (Page, "<h4>Dur", "&nbsp;</h4>").at (0);
+        Delete (Temp, 0, Temp.find_first_of (':')+2);
 
-        unsigned i, Duree (0);
+        unsigned i, Time (0);
         istringstream iss2 (Temp);
         iss2 >> i >> Temp;
 
         if (Temp == "min.")
-            Duree += i;
+            Time += i;
         else
         {
-            Duree += i * 60;
+            Time += i * 60;
             iss2 >> i;
-            Duree += i;
+            Time += i;
         }
 
-        Film.SetDuree (Duree);
+        Film.SetTime (Time);
     }
     catch (const exception &) { }
 
     // Image
     try
     {
-        Temp = Extraire (Page, "<td valign=\"top\" width=\"120\">\r\n<img src=\"", "\"").at (0);
+        Temp = Extract (Page, "<td valign=\"top\" width=\"120\">\r\n<img src=\"", "\"").at (0);
 
         ostringstream oss;
         oss << Film.GetIdImg();
 
         ofstream ofs (oss.str().c_str(), fstream::binary);
-        GetFich (Temp, ofs);
+        GetFile (Temp, ofs);
     }
     catch (const exception &) { }
 

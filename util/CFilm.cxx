@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -29,13 +29,13 @@ namespace nsCatalog
 {
     ostream & operator << (ostream &os, const CFilm &F)
     {
-        return os << '"' << F.m_Titre << "\" :" << endl
+        return os << '"' << F.m_Title << "\" :" << endl
                   << "\t- id : " << F.m_Id << endl
                   << "\t- description : " << F.m_Desc << endl
                   << "\t- genre : " << F.m_Genre << endl
-                  << "\t- réalisateur : " << F.m_Realisateur << endl
-                  << "\t- acteurs : " << F.m_Acteurs << endl
+                  << "\t- réalisateur : " << F.m_Creator << endl
+                  << "\t- acteurs : " << F.m_Actors << endl
                   << "\t- date : " << F.GetJour() << '/' << F.GetMois() << '/' << F.GetAnnee() << endl
-                  << "\t- duree : " << F.m_Duree << flush;
+                  << "\t- duree : " << F.m_Time << flush;
     }
 }

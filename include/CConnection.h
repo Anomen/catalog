@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#if !defined __CCONNEXION_H__
-#define      __CCONNEXION_H__
+#if !defined __CCONNECTION_H__
+#define      __CCONNECTION_H__
 
 #include <string>
 #include <sys/types.h>  // socket()
@@ -30,29 +30,29 @@
 
 namespace nsCatalog
 {
-    class CConnexion
+    class CConnection
     {
       public:
-        CConnexion (std::string Serveur = "");
-        ~CConnexion();
+        CConnection (std::string Server = "");
+        ~CConnection();
 
         void Init () throw (CException);
         void Close();
 
         std::string GetPage (std::string Url) throw (CException);
-        void        GetFich (std::string Url, std::ofstream & ofs) throw (CException);
+        void        GetFile (std::string Url, std::ofstream & ofs) throw (CException);
 
         // Les modifieurs
-        void SetServeur (std::string Serveur);
+        void SetServer (std::string Server);
 
       private:
-        std::string m_Serveur;
+        std::string m_Server;
         int         m_Sd;
 
         void Convert (std::string & Str) const;
     };
 }
 
-#include "CConnexion.hxx"
+#include "CConnection.hxx"
 
 #endif

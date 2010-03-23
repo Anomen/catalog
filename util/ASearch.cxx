@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ARecherche.h"
+#include "ASearch.h"
 
 #include <iconv.h>
 #include <string.h>
@@ -28,22 +28,22 @@
 using namespace std;
 using namespace nsCatalog;
 
-vector<string> ARecherche::Extraire (const string & Texte, string Begin, string End) const
+vector<string> ASearch::Extract (const string & Text, string Begin, string End) const
 {
     int Pos (0), Taille (Begin.size());
     vector<string> VResult;
 
     while (true)
     {
-        if ((Pos = Texte.find (Begin, Pos+1)) == -1)
+        if ((Pos = Text.find (Begin, Pos+1)) == -1)
             break;
         Pos += Taille;
 
         try
         {
-            int PosEnd = Texte.find (End, Pos);
+            int PosEnd = Text.find (End, Pos);
 
-            string Temp (Texte.substr (Pos, PosEnd - Pos));
+            string Temp (Text.substr (Pos, PosEnd - Pos));
             VResult.push_back (Temp);
 
             Pos = PosEnd + End.size();
@@ -55,7 +55,7 @@ vector<string> ARecherche::Extraire (const string & Texte, string Begin, string 
 
 }
 
-string ARecherche::GetPage (string Url) throw (CException)
+string ASearch::GetPage (string Url) throw (CException)
 {
     iconv_t cd = iconv_open ("UTF-8", "ISO-8859-1");
 

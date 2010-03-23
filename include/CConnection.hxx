@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,13 +20,13 @@
 #if !defined __CCONNEXION_HXX__
 #define      __CCONNEXION_HXX__
 
-#define CCONNEXION nsCatalog::CConnexion
+#define CCONNEXION nsCatalog::CConnection
 
-inline CCONNEXION::CConnexion (std::string Serveur /* = "" */)
-    : m_Serveur (Serveur)
+inline CCONNEXION::CConnection (std::string Server /* = "" */)
+    : m_Server (Server)
 { }
 
-inline CCONNEXION::~CConnexion()
+inline CCONNEXION::~CConnection()
 {
     Close();
 }
@@ -37,9 +37,9 @@ inline void CCONNEXION::Close()
     //m_Sd = 0;
 }
 
-inline void CCONNEXION::SetServeur (std::string Serveur)
+inline void CCONNEXION::SetServer (std::string Server)
 {
-    m_Serveur = Serveur;
+    m_Server = Server;
 }
 
 #endif

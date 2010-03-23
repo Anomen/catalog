@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -27,21 +27,21 @@
 #include <iostream>
 #include <sstream>
 
-#include "CConnexion.h"
+#include "CConnection.h"
 #include "CException.h"
 
 using namespace nsCatalog;
 using namespace std;
 
-void CConnexion::Init() throw (CException)
+void CConnection::Init() throw (CException)
 {
-    if (m_Serveur == "")
+    if (m_Server == "")
         throw CException ("Aucun serveur précisé.");
 
     if ((m_Sd = socket (AF_INET, SOCK_STREAM, 0)) < 0)
         throw CException ("Erreur à l'ouverture de la socket.");
 
-    hostent * Hostent = gethostbyname (m_Serveur.c_str());
+    hostent * Hostent = gethostbyname (m_Server.c_str());
     if (!Hostent)
         throw CException ("Erreur gethostbyname()");
 
@@ -55,12 +55,12 @@ void CConnexion::Init() throw (CException)
         throw CException ("Erreur connect()");
 }
 
-string CConnexion::GetPage (string Url) throw (CException)
+string CConnection::GetPage (string Url) throw (CException)
 {
     Init();
 
     int NbEnv (0); 
-    string Str = "GET /" + Url + " HTTP/1.0\r\nHost: " + m_Serveur + "\r\n\r\n";
+    string Str = "GET /" + Url + " HTTP/1.0\r\nHost: " + m_Server + "\r\n\r\n";
     if ((NbEnv = write (m_Sd, Str.c_str(), Str.size())) <= 0)
     {
         Close();
@@ -85,15 +85,15 @@ string CConnexion::GetPage (string Url) throw (CException)
     return Page;
 }
 
-void CConnexion::GetFich (string Url, ofstream &ofs) throw (CException)
+void CConnection::GetFile (string Url, ofstream &ofs) throw (CException)
 {
     Init();
 
-    string Serveur (Url.substr (7, Url.find_first_of ("/", 7)-7));
+    string Server (Url.substr (7, Url.find_first_of ("/", 7)-7));
     Url = Url.substr (Url.find_first_of ("/", 7), Url.size() - Url.find_first_of ("/", 7));
 
     int NbEnv (0); 
-    string Str = "GET " + Url + " HTTP/1.0\r\nHost: " + Serveur + "\r\n\r\n";
+    string Str = "GET " + Url + " HTTP/1.0\r\nHost: " + Server + "\r\n\r\n";
     if ((NbEnv = write (m_Sd, Str.c_str(), Str.size())) <= 0)
     {
         Close();

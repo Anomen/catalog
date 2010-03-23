@@ -9654,7 +9654,7 @@ static double localtimeOffset(DateTime *p){
 **
 ** Return 0 on success and 1 if there is any kind of error.
 */
-static int parseModifier(const char *zMod, DateTime *p){
+static int parseEdit(const char *zMod, DateTime *p){
   int rc = 1;
   int n;
   double r;
@@ -9863,7 +9863,7 @@ static int isDate(
     return 1;
   }
   for(i=1; i<argc; i++){
-    if( (z = sqlite3_value_text(argv[i]))==0 || parseModifier((char*)z, p) ){
+    if( (z = sqlite3_value_text(argv[i]))==0 || parseEdit((char*)z, p) ){
       return 1;
     }
   }

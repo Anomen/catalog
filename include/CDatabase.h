@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -39,9 +39,9 @@ namespace nsCatalog
         void Init() throw (CException);
         void Delete() const throw (CException);
 
-        void Ajouter  (const CFilm & Film) const throw (CException);
-        void Modifier (const CFilm & Film) const throw (CException);
-        void Supprimer(const CFilm & Film) const throw (CException);
+        void Add  (const CFilm & Film) const throw (CException);
+        void Edit (const CFilm & Film) const throw (CException);
+        void Delete(const CFilm & Film) const throw (CException);
 
         VFilm_t GetFilm(std::string titre) const throw (CException);
         VFilm_t GetAllFilms()              const throw (CException);

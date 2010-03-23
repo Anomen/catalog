@@ -1,6 +1,6 @@
 /*
  * This file is part of catalog-server.
- * Copyright (C) 2008-2009  Kevin Vicrey <kevin.vicrey@gmail.com>
+ * Copyright (C) 2008-2010  Kevin Vicrey <kevin.vicrey@gmail.com>
  * Copyright (C) 2008-2009  Romain Giraud <giraud.romain@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -87,7 +87,7 @@ void CPLUGINMANAGER::LoadDyLibrary (std::string name) throw (CException)
     _MPlugins[name] = create_plugin;
 }
 
-nsCatalog::ARecherche * CPLUGINMANAGER::Create (std::string name) throw (CException)
+nsCatalog::ASearch * CPLUGINMANAGER::Create (std::string name) throw (CException)
 {
     if (_MPlugins.find(name + ".so") == _MPlugins.end())
         throw CException ("Le plugin " + name + " n'existe pas.");
